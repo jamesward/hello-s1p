@@ -6,6 +6,8 @@ import org.springframework.boot.runApplication
 import org.springframework.context.ApplicationListener
 import org.springframework.context.support.beans
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
+import org.springframework.security.oauth2.core.oidc.user.OidcUser
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.body
 import org.springframework.web.reactive.function.server.router
@@ -20,6 +22,12 @@ fun main(args: Array<String>) {
             bean {
                 val repository = ref<ReservationRepository>()
                 router {
+                    GET("/hello") {
+                        val name  = it.principal().map { it as OAuth2AuthenticationToken }
+                                .map { it.principal as OidcUser }
+                                .map { it.fullName }
+                        ServerResponse.ok().body( name )
+                    }
                     GET("/reservations") {
                         ServerResponse.ok().body(repository.findAll())
                     }

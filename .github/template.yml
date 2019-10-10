@@ -10,3 +10,5 @@ spec:
           envFrom:
             - secretRef:
                 name: mongo-secret
+            - secretRef:
+                name: oidc-secret
